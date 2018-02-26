@@ -1,0 +1,124 @@
+Public Sub 휴폐업_탭_생성()
+' 작성자: 김정훈
+' 최초작성일: 2018-02-08
+' 최근변경일: N/A
+' 용도: 감사본부 RPA 1단계 휴폐업 Tab생성
+
+'#################################################################################
+    '#################  변수 선언  ###############################
+    Dim i As Long            ' for loop 시작 용도
+    Dim row_cnt  As Long     ' for loop 종료 용도
+    Dim wks As Worksheet     ' Tab 지정
+    Dim ary As Variant       ' 데이터 array 설정
+    Dim regum As Variant      ' 데이터에서 일부 가져오는 array 설정
+    Dim start_cell As Range  ' row counter 시작 셀
+    Dim pic As Picture       ' 이미지 삽입용
+    Dim shp As Shape         ' ?
+    Dim dt As String         ' today's date
+    Dim path As String       ' 이미지 저장되어 있는 경로 앞부분
+    Dim wksname As Variant   ' 추가
+
+    Dim picleft As Single
+    Dim pictop As Single
+
+
+ '#################################################################################
+    '#################  값 지정  ###############################
+    Set wks = Worksheets("휴폐업 및 당좌거래정지 조회") ' 고정
+    Set start_cell = wks.Range("D16")            ' 고정
+    dt = Replace(Date, "-", "") '오늘 날짜('YYYY-MM-DD'에서 "-" 제거하여 저장
+    row_cnt = WorksheetFunction.Max(wks.Range("D16:D10000").Value) '하드코딩 되어 있음. / 응용: row_cnt = WorksheetFunction.COUNT(Range("B4:B7").Value)
+    ary = wks.Range(start_cell, wks.Cells(15 + row_cnt, 6)).Value '하드코딩 되어 있음. / 응용: wks.Range(start_cell, wks.Cells(4 + row_cnt, 5)).Select
+    regnum = Application.WorksheetFunction.Index(ary, 0, 3) ' 하드코딩 되어 있음 / 응용:     '사업자번호 array = replace(--,"-","") & dt .png = file name
+'#################################################################################
+    '#################  프로세스1 BEGIN(동일 이름 tab 있는 경우 삭제)   ###############################
+    For Each wks In ActiveWorkbook.Sheets
+    Application.DisplayAlerts = False
+        For Each wksname In Application.WorksheetFunction.Index(ary, i, 1)
+            On Error Resume Next
+            If wksname = wks.Name Then
+                wks.Delete
+                On Error GoTo 0
+            End If
+        Next wksname
+    Next wks
+    Application.DisplayAlerts = True
+    '#################  프로세스1 END(동일 이름 tab 있는 경우 삭제)   ###############################
+'#################################################################################
+    '#################  프로세스2 BEGIN- tab생성   ###############################
+    For i = 1 To row_cnt
+
+        Set wks = Sheets.Add(After:=Sheets(Worksheets.Count)) 'TAB 새로 생성
+        Sheets(ActiveSheet.Name).Name = i 'TAB RENAME
+
+    ' Cell 고정 값 입력
+        ActiveSheet.Range("B1") = "ADC"
+        ActiveSheet.Range("B2") = "KISLINE 등급현황 Screen Capture"
+        ActiveSheet.Range("C4") = "고객번호"
+        ActiveSheet.Range("C5") = "고객명"
+        ActiveSheet.Range("C6") = "사업자등록번호"
+    ' Cell 가변 값 입력 (Application.WorksheetFunction.Index(ary,row_num, column_num)
+        ActiveSheet.Range("D4") = Application.WorksheetFunction.Index(ary, i, 1) ' ARRAY는 ROW > COLUMN 순으로
+        ActiveSheet.Range("D5") = Application.WorksheetFunction.Index(ary, i, 2) ' ARRAY는 ROW > COLUMN 순으로
+        ActiveSheet.Range("D6") = Application.WorksheetFunction.Index(ary, i, 3) ' ARRAY는 ROW > COLUMN 순으로
+    ' Column width 조절
+        ActiveSheet.Range("C:D").EntireColumn.AutoFit
+    ' 값 입력 된 셀들 테두리 작업
+        With ActiveSheet.Range("C4:D6")
+            .Borders(xlInsideVertical).LineStyle = xlContinuous
+            .Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Borders(xlEdgeTop).LineStyle = xlContinuous
+            .Borders(xlEdgeBottom).LineStyle = xlContinuous
+            .Borders(xlEdgeRight).LineStyle = xlContinuous
+            .Borders(xlEdgeLeft).LineStyle = xlContinuous
+        End With
+    ActiveWindow.DisplayGridlines = False
+    ' 이미지 저장된 경로 확인
+        path = "C:\Users\tn934tj\Pictures\" & Replace(Application.WorksheetFunction.Index(ary, i, 3), "-", "") & "_" & dt & ".png"
+    ' 이미지 저장되어 있지 않다면, 없음 값 입력
+        If Dir(path) = "" Then
+            ActiveSheet.Range("C8") = "검색회사가 없습니다."
+        End If
+    ' 이미지 저장되어 있으면, 해당 이미지 삽입
+        If Dir(path) <> "" Then
+            With ActiveSheet.Pictures.Insert(path)
+                .Left = ActiveSheet.Range("C11").Left
+                .Top = ActiveSheet.Range("C11").Top
+                .Placement = 1
+
+            End With
+        End If
+
+
+    '삽입 된 그림에 대해서 링크제거 작업
+        For Each shp In ActiveSheet.Shapes
+            If shp.Type = 11 Then ' object가 그림(image)인 경우에는
+                picleft = shp.Left ' 위치 기억
+                pictop = shp.Top ' 위치 기억
+
+                shp.Copy ' 도형 복사
+                ActiveSheet.PasteSpecial link:=False '도형 링크없이 삽입
+                shp.Delete ' 도형 카피본 삭제
+
+                Selection.Left = picleft
+                Selection.Top = pictop
+            End If
+        Next shp
+
+    ' Tab Color = Black 으로 변경
+    ActiveSheet.Tab.Color = 1
+
+
+    '#################  프로세스2 END- tab생성 + LOOPING 시작 ###############################
+    Next i
+
+
+' Show Main worksheet A1 cell
+    Worksheets("휴폐업 및 당좌거래정지 조회").Select
+    ActiveSheet.Range("A1").Select
+
+' Save (and Close)
+    ActiveWorkbook.Save
+    'ActiveWorkbook.Close
+
+End Sub
