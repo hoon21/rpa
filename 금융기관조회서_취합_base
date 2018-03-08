@@ -1,1452 +1,3049 @@
-Sub GetSheets1()
-    
+Sub GetSheets1(source_folderpath_feed As String, destwbk_path As String, new_file_name As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
-    'Dim basefile As String
-    
+
     Dim nrow As Long
-    
-    
+
+    Dim folderpath As String
+
     Dim source_folderpath As String
+
     Dim source_filename As String
-    Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
+    Dim v1, v2, v3, v4, v5, v61, v62, v71, v72, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
-    
+
+   
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
+
+    Dim save_as As String
+
+   
+
     
-    'Dim di1, di2 As Long
+
+    save_as = new_file_name
+
+   
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
+    Set destwbk = Workbooks.Open(destwbk_path)
+
+    'destwbk.SaveAs filename:=source_folderpath & "merged.xlsx"
+
+    destwbk.SaveAs filename:=source_folderpath & save_as & "_취합.xlsx"
+
+   
+
     
-    
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
-    
+
     Set destsheet = destwbk.Sheets("0")
-    'nrow = 1
-    
-    'Dim test_text As String
-    'test_text = destsheet.Range("c3").Value
-    'MsgBox test_text
-    
-    
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    
-    source_filename = Dir(source_folderpath & "*.xlsx")
-    
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
 
-
-
-
-
-    
-    'rownum1 = 11
+ 
 
     Do While source_filename <> ""
-        
-        
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
+
+       
+
         
+
     Dim x As Long
 
-        
-        For x = source_last_row To 1 Step -1
-            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
-        Next
-        
-
-        
-        'MsgBox source_last_row
-        
-        'Set rng_to_delete = Range(source_wks.Cells(1, 1), source_wks.Cells(source_last_row, 20))
-        rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
-        rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
-    
-        
-        'MsgBox "dest rownum1 =" & rownum1 & " and dest rownum2 =" & rownum2
-        
-        'On Error Resume Next
-        'wks.Range(wks.Cells(1, 3), wks.Cells(i11, 3)).Select
-        'Selection.SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-    
-        
-        Dim ib, ie As Integer
-        Dim i1, i2, i3, i4, i5, i61, i62, i71, i72, i8, i9, i10, i11 As Integer
-        Dim s1, s2, s3 As String
  
-        Dim ab, ae, a1, a2, a3, a4, a5, a61, a62, a71, a72, a8, a9, a10 As Variant
-        Dim r1, r2, r3, r4, r5, r6, r7, r8, r9, r10 As Range
-        
-    
+
+       
+
+        For x = source_last_row To 1 Step -1
+
+            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
+        Next
+
+       
+
+ 
+
+       
+
+        'MsgBox source_last_row
+
+       
+
+        'Set rng_to_delete = Range(source_wks.Cells(1, 1), source_wks.Cells(source_last_row, 20))
+
+        rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
+        rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
+   
+
         
 
-    
-        'replace the below
-        'source_wks.Columns("B:N").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
-        On Error Resume Next
-        i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
-        i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
-        i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
-        i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
-        i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
-        i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
-        i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
-        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
-        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
-        i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
-        i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
-        i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
-        i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
-        On Error GoTo 0
-        
-        'MsgBox "source i1 =" & i1 & " and source i2 =" & i2
-        
-        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
-        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
-        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
-        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
-        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
-        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
-        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
-        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
-        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        'MsgBox "rownums are from " & UBound(a1, 1) & " to " & UBound(a1, 2)
+        'MsgBox "dest rownum1 =" & rownum1 & " and dest rownum2 =" & rownum2
+
        
+
+        'On Error Resume Next
+
+        'wks.Range(wks.Cells(1, 3), wks.Cells(i11, 3)).Select
+
+        'Selection.SpecialCells(xlCellTypeBlanks).EntireRow.Delete
+
+   
+
+        
+
+        Dim ib, ie As Integer
+
+        Dim i1, i2, i3, i4, i5, i61, i62, i71, i72, i8, i9, i10, i11 As Integer
+
+        Dim s1, s2, s3 As String
+
+        Dim ab, ae, a1, a2, a3, a4, a5, a61, a62, a71, a72, a8, a9, a10 As Variant
+
+        Dim r1, r2, r3, r4, r5, r6, r7, r8, r9, r10 As Range
+
+       
+
+    
+
+        
+
+ 
+
+   
+
+        'replace the below
+
+        'source_wks.Columns("B:N").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
+
+       
+
+        On Error Resume Next
+
+        i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
+        On Error GoTo 0
+
+       
+
+        'MsgBox "source i1 =" & i1 & " and source i2 =" & i2
+
+       
+
+        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
+        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
+        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
+        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
+        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
+        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
+        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
+        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
+        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
+        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
+       
+
+        'MsgBox "rownums are from " & UBound(a1, 1) & " to " & UBound(a1, 2)
+
+      
+
         'MsgBox UBound(a1, 1)
 
-        
+ 
+
+       
+
         'MsgBox "dest array1 = " & di1 & " x " & di2
-        
-        
+
+       
 
         
+
+    If i1 + 2 = i2 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+           
+
         destsheet.Range("A" & rownum1 & ":" & "A" & rownum1 - 1 + UBound(a1, 1)).EntireRow.Insert
 
+ 
+
         Set rng1 = destsheet.Range("C" & rownum1 & ":" & "K" & rownum1 - 1 + UBound(a1, 1))
+
         rng1.Value = a1
+
         destsheet.Range("A" & rownum1 & ":" & "A" & rownum1 - 1 + UBound(a1, 1)).Value = source_filename
 
+ 
+
         rownum1 = rownum1 + UBound(a1, 1)
+
        ' di2 =
 
-        
-        source_filename = Dir()
-        
+ 
+
+       
+
+                
+
         source_wbk.Close savechanges:=False
-        
-        
+
+       
+
+    End If
+
+   
+
+        source_filename = Dir()
+
+       
+
         ''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-        
+ 
+
+       
+
     Loop
-    
+
+   
+
     'destsheet.Columns.AutoFit
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets2()
-    
+
+Sub GetSheets2(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-        
-        
-                
-    Dim x As Long
+
+       
 
         
+
+                
+
+    Dim x As Long
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
+
+       
+
         
-        
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         ''source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
+       
+
         
-        
+
+    If i2 + 2 = i3 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+       
+
         '숫자 체인지 필요 variable begin 2
+
         destsheet.Range("A" & rownum2 & ":" & "A" & rownum2 - 1 + UBound(a2, 1)).EntireRow.Insert
+
         Set rng2 = destsheet.Range("C" & rownum2 & ":" & "N" & rownum2 - 1 + UBound(a2, 1))
+
         destsheet.Range("A" & rownum2 & ":" & "A" & rownum2 - 1 + UBound(a2, 1)).Value = source_filename
+
         rng2.Value = a2
+
         rownum2 = rownum2 + UBound(a2, 1)
+
         '숫자 체인지 필요 variable end 2
 
-        
-        source_filename = Dir()
+ 
+
+       
+
         source_wbk.Close savechanges:=False
 
+ 
+
+    End If
+
+       source_filename = Dir()
+
+ 
+
+ 
+
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets3()
-    
+
+Sub GetSheets3(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-        
-        
-                
-    Dim x As Long
+
+       
 
         
+
+                
+
+    Dim x As Long
+
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
+
+       
+
         
-        
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
         
+
         
+
+    If i3 + 2 = i4 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+       
+
         '숫자 체인지 필요 variable begin
+
         destsheet.Range("A" & rownum3 & ":" & "A" & rownum3 - 1 + UBound(a3, 1)).EntireRow.Insert
+
         Set rng3 = destsheet.Range("C" & rownum3 & ":" & "J" & rownum3 - 1 + UBound(a3, 1))
+
         rng3.Value = a3
+
         destsheet.Range("A" & rownum3 & ":" & "A" & rownum3 - 1 + UBound(a3, 1)).Value = source_filename
+
         rownum3 = rownum3 + UBound(a3, 1)
+
         '숫자 체인지 필요 variable end
 
-        
-        source_filename = Dir()
+ 
+
         source_wbk.Close savechanges:=False
 
+ 
+
+    End If
+
+        source_filename = Dir()
+
+ 
+
+ 
+
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets4()
-    
+
+Sub GetSheets4(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-        
-        
-                
-    Dim x As Long
+
+       
 
         
+
+                
+
+    Dim x As Long
+
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
+
+       
+
         
-        
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        
+
+       a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
+       
+
+    If i4 + 2 = i5 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+    
+
         '숫자 체인지 필요 variable begin 4
+
         destsheet.Range("A" & rownum4 & ":" & "A" & rownum4 - 1 + UBound(a4, 1)).EntireRow.Insert
+
         Set rng4 = destsheet.Range("C" & rownum4 & ":" & "M" & rownum4 - 1 + UBound(a4, 1))
+
         rng4.Value = a4
+
         destsheet.Range("A" & rownum4 & ":" & "A" & rownum4 - 1 + UBound(a4, 1)).Value = source_filename
-        
+
+       
+
         rownum4 = rownum4 + UBound(a4, 1)
+
         '숫자 체인지 필요 variable end 4
 
-        
+ 
+
+    source_wbk.Close savechanges:=False
+
+ 
+
+    End If
+
         source_filename = Dir()
-        source_wbk.Close savechanges:=False
+
+ 
+
+ 
 
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets5()
-    
+
+Sub GetSheets5(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
+
                 
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-        
+
+       
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        
+
+       a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
+       
+
+    If i5 + 3 = i61 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+    
+
         '숫자 체인지 필요 variable begin 5
+
         destsheet.Range("A" & rownum5 & ":" & "A" & rownum5 - 1 + UBound(a5, 1)).EntireRow.Insert
+
         Set rng5 = destsheet.Range("C" & rownum5 & ":" & "I" & rownum5 - 1 + UBound(a5, 1))
+
         rng5.Value = a5
+
         destsheet.Range("A" & rownum5 & ":" & "A" & rownum5 - 1 + UBound(a5, 1)).Value = source_filename
+
         rownum5 = rownum5 + UBound(a5, 1)
+
         '숫자 체인지 필요 variable end 5
 
-        
+ 
+
+       
+
+     source_wbk.Close savechanges:=False
+
+ 
+
+    End If
+
         source_filename = Dir()
-        source_wbk.Close savechanges:=False
 
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets61()
-    
+
+Sub GetSheets61(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
+
                
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-         
+
+        
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         'MsgBox rownum61 & "-" & rownum62
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
-        
+
+       
+
         'MsgBox i61 & "-" & i62
-        
+
+       
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-If i61 + 2 = i62 Then
+
+       
+
+    If i61 + 2 = i62 Then
+
         source_wbk.Close savechanges:=False
+
      Else
-                
+
+               
+
         '숫자 체인지 필요 variable begin 61
+
         destsheet.Range("A" & rownum61 & ":" & "A" & rownum61 - 1 + UBound(a61, 1)).EntireRow.Insert
+
         Set rng61 = destsheet.Range("C" & rownum61 & ":" & "F" & rownum61 - 1 + UBound(a61, 1))
+
         rng61.Value = a61
+
         destsheet.Range("A" & rownum61 & ":" & "A" & rownum61 - 1 + UBound(a61, 1)).Value = source_filename
-        
+
+       
+
         rownum61 = rownum61 + UBound(a61, 1)
+
         '숫자 체인지 필요 variable end 61
 
+ 
+
+       
+
         
-        
+
         source_wbk.Close savechanges:=False
+
 End If
+
     source_filename = Dir()
+
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets62()
-    
+
+Sub GetSheets62(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
+
+               
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-        
+
+       
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i8 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-If i62 + 3 = i71 Then
+
+       
+
+    If i62 + 3 = i71 Then
+
         source_wbk.Close savechanges:=False
+
      Else
-        
+
+       
+
         '숫자 체인지 필요 variable begin 62
+
         destsheet.Range("A" & rownum62 & ":" & "A" & rownum62 - 1 + UBound(a62, 1)).EntireRow.Insert
+
         Set rng62 = destsheet.Range("C" & rownum62 & ":" & "G" & rownum62 - 1 + UBound(a62, 1))
+
         rng62.Value = a62
+
         destsheet.Range("A" & rownum62 & ":" & "A" & rownum62 - 1 + UBound(a62, 1)).Value = source_filename
+
         rownum62 = rownum62 + UBound(a62, 1)
+
         '숫자 체인지 필요 variable end 62
 
-        
-        
-        source_wbk.Close savechanges:=False
-End If
-source_filename = Dir()
-    Loop
-    
-    destwbk.Close savechanges:=True
+ 
 
-End Sub
-Sub GetSheets71()
-    
-    Dim destwbk As Workbook
-    Dim destsheet As Worksheet
-    Dim source_folderpath As String
-    Dim source_filename As String
-    Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
-    Dim source_wbk As Workbook
-    Dim source_wks As Worksheet
-    Dim sourcerange As Range
-    Dim source_last_row As Long
-    Dim destrange As Range
-    Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
-    Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
-    v1 = "1."
-    v2 = "2."
-    v3 = "3."
-    v4 = "4."
-    v5 = "5."
-    v61 = "6-1. 전자어음"
-    v62 = "6-2. 수표/어음"
-    v71 = "7-1. 미결제 전자어음"
-    v72 = "7-2. 수표/어음"
-    v8 = "8."
-    v9 = "9."
-    v10 = "10."
-    v11 = "11."
-    
-
-    Do While source_filename <> ""
-        
-        Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
-        source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
-    Dim x As Long
+       
 
         
-        For x = source_last_row To 1 Step -1
-            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
-        Next
-        
-        rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
-        rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
-        rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
-        rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
-        rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
-        rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
-        rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
-        rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
-        rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
-        rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
-        rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
-        rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
-        'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
-        On Error Resume Next
-        i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
-        i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
-        i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
-        i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
-        i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
-        i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
-        i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
-        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
-        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
-        i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
-        i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
-        i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
-        i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
-        On Error GoTo 0
-        
-        
-        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
-        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
-        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
-        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
-        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
-        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
-        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
-        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i8 - 1, 8)).Value
-        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
-        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-If i71 + 2 = i72 Then
-        source_wbk.Close savechanges:=False
-     Else
-        
-        '숫자 체인지 필요 variable begin 71
-        destsheet.Range("A" & rownum71 & ":" & "A" & rownum71 - 1 + UBound(a71, 1)).EntireRow.Insert
-        Set rng71 = destsheet.Range("C" & rownum71 & ":" & "H" & rownum71 - 1 + UBound(a71, 1))
-        rng71.Value = a71
-        
-        
-        destsheet.Range("A" & rownum71 & ":" & "A" & rownum71 - 1 + UBound(a71, 1)).Value = source_filename
 
-        rownum71 = rownum71 + UBound(a71, 1)
-        '숫자 체인지 필요 variable end 71
-
-        
-        
         source_wbk.Close savechanges:=False
 
     End If
-     source_filename = Dir()
+
+        source_filename = Dir()
 
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
-Sub GetSheets72()
-    
+
+ 
+
+Sub GetSheets72(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
-    v10 = "10."
+
+   v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
+
+               
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-        
+
+       
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i8 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
         a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
+
+       
+
      If i72 + 2 = i8 Then
+
         source_wbk.Close savechanges:=False
+
      Else
-     
+
+    
+
         
+
         '숫자 체인지 필요 variable begin 72
+
         destsheet.Range("A" & rownum72 & ":" & "A" & rownum72 - 1 + UBound(a72, 1)).EntireRow.Insert
+
         Set rng72 = destsheet.Range("C" & rownum72 & ":" & "G" & rownum72 - 1 + UBound(a72, 1))
+
         rng72.Value = a72
-        
+
+       
+
                 destsheet.Range("A" & rownum72 & ":" & "A" & rownum72 - 1 + UBound(a72, 1)).Value = source_filename
 
-        
+ 
+
+       
+
         rownum72 = rownum72 + UBound(a72, 1)
+
         '숫자 체인지 필요 variable end 72
 
+ 
+
+       
+
         
+
         
+
+        source_wbk.Close savechanges:=False
+
+ 
+
+    End If
+
+   
+
+        source_filename = Dir()
+
+   
+
+    Loop
+
+   
+
+    destwbk.Close savechanges:=True
+
+ 
+
+End Sub
+
+ 
+
+Sub GetSheets8(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
+    Dim destwbk As Workbook
+
+    Dim destsheet As Worksheet
+
+    Dim source_folderpath As String
+
+    Dim source_filename As String
+
+    Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
+    Dim source_wbk As Workbook
+
+    Dim source_wks As Worksheet
+
+    Dim sourcerange As Range
+
+    Dim source_last_row As Long
+
+    Dim destrange As Range
+
+    Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
+    Set destsheet = destwbk.Sheets("0")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
+    v1 = "1."
+
+    v2 = "2."
+
+    v3 = "3."
+
+    v4 = "4."
+
+    v5 = "5."
+
+    v61 = "6-1. 전자어음"
+
+    v62 = "6-2. 수표/어음"
+
+    v71 = "7-1. 미결제 전자어음"
+
+    v72 = "7-2. 수표/어음"
+
+    v8 = "8."
+
+    v9 = "9."
+
+    v10 = "10."
+
+    v11 = "11."
+
+   
+
+ 
+
+    Do While source_filename <> ""
+
+       
+
+        Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
+
+        Set source_wks = source_wbk.Worksheets(1)
+
+        source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
+
+               
+
+    Dim x As Long
+
+ 
+
+       
+
+        For x = source_last_row To 1 Step -1
+
+            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
+        Next
+
+       
+
+        rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
+        rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
+        rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
+        rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
+        rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
+        rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
+        rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
+        rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
+        rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
+        rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
+        rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
+        rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
+
+       
+
+        'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
+
+       
+
+        On Error Resume Next
+
+        i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
+        i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
+        On Error GoTo 0
+
+       
+
         
+
+        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
+        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
+        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
+        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
+        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
+        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
+        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
+        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i8 - 1, 8)).Value
+
+        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
+        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
+        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
+
+       
+
+     If i8 + 2 = i9 Then
+
+        source_wbk.Close savechanges:=False
+
+     Else
+
+    
+
+        '숫자 체인지 필요 variable begin 8
+
+        destsheet.Range("A" & rownum8 & ":" & "A" & rownum8 - 1 + UBound(a8, 1)).EntireRow.Insert
+
+        Set rng8 = destsheet.Range("C" & rownum8 & ":" & "J" & rownum8 - 1 + UBound(a8, 1))
+
+        rng8.Value = a8
+
+       
+
+                destsheet.Range("A" & rownum8 & ":" & "A" & rownum8 - 1 + UBound(a8, 1)).Value = source_filename
+
+ 
+
+       
+
+        rownum8 = rownum8 + UBound(a8, 1)
+
+        '숫자 체인지 필요 variable end 8
+
+ 
+
+       
+
+ 
+
         source_wbk.Close savechanges:=False
 
     End If
-    
+
         source_filename = Dir()
-    
+
+   
+
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
+
+ 
 
 End Sub
 
-Sub GetSheets8()
-    
+ 
+
+Sub GetSheets9(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     v1 = "1."
+
     v2 = "2."
+
     v3 = "3."
+
     v4 = "4."
+
     v5 = "5."
+
     v61 = "6-1. 전자어음"
+
     v62 = "6-2. 수표/어음"
+
     v71 = "7-1. 미결제 전자어음"
+
     v72 = "7-2. 수표/어음"
+
     v8 = "8."
+
     v9 = "9."
+
     v10 = "10."
+
     v11 = "11."
-    
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
+
+               
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-        
+
+       
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
+
+       
+
         
-        
+
         a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
         a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
         a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
         a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
         a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
         a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
         a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
         a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i8 - 1, 8)).Value
+
+        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
         a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
-        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
+        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 12)).Value
+
         a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        
-        '숫자 체인지 필요 variable begin 8
-        destsheet.Range("A" & rownum8 & ":" & "A" & rownum8 - 1 + UBound(a8, 1)).EntireRow.Insert
-        Set rng8 = destsheet.Range("C" & rownum8 & ":" & "J" & rownum8 - 1 + UBound(a8, 1))
-        rng8.Value = a8
-        
-                destsheet.Range("A" & rownum8 & ":" & "A" & rownum8 - 1 + UBound(a8, 1)).Value = source_filename
 
-        
-        rownum8 = rownum8 + UBound(a8, 1)
-        '숫자 체인지 필요 variable end 8
+       
 
-        
-        source_filename = Dir()
+     If i9 + 3 = i10 Then
+
         source_wbk.Close savechanges:=False
 
-    Loop
-    
-    destwbk.Close savechanges:=True
+     Else
 
-End Sub
-
-Sub GetSheets9()
-    
-    Dim destwbk As Workbook
-    Dim destsheet As Worksheet
-    Dim source_folderpath As String
-    Dim source_filename As String
-    Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
-    Dim source_wbk As Workbook
-    Dim source_wks As Worksheet
-    Dim sourcerange As Range
-    Dim source_last_row As Long
-    Dim destrange As Range
-    Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
-    Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
-    v1 = "1."
-    v2 = "2."
-    v3 = "3."
-    v4 = "4."
-    v5 = "5."
-    v61 = "6-1. 전자어음"
-    v62 = "6-2. 수표/어음"
-    v71 = "7-1. 미결제 전자어음"
-    v72 = "7-2. 수표/어음"
-    v8 = "8."
-    v9 = "9."
-    v10 = "10."
-    v11 = "11."
     
 
-    Do While source_filename <> ""
-        
-        Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
-        source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
-    Dim x As Long
-
-        
-        For x = source_last_row To 1 Step -1
-            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
-        Next
-        
-        rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
-        rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
-        rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
-        rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
-        rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
-        rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
-        rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
-        rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
-        rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
-        rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
-        rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
-        rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
-        'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
-        On Error Resume Next
-        i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
-        i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
-        i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
-        i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
-        i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
-        i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
-        i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
-        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
-        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
-        i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
-        i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
-        i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
-        i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
-        On Error GoTo 0
-        
-        
-        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
-        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
-        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
-        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
-        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
-        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
-        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
-        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
-        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        
         '숫자 체인지 필요 variable begin 9
+
         destsheet.Range("A" & rownum9 & ":" & "A" & rownum9 - 1 + UBound(a9, 1)).EntireRow.Insert
+
         Set rng9 = destsheet.Range("C" & rownum9 & ":" & "K" & rownum9 - 1 + UBound(a9, 1))
+
         rng9.Value = a9
-        
+
+       
+
         destsheet.Range("A" & rownum9 & ":" & "A" & rownum9 - 1 + UBound(a9, 1)).Value = source_filename
-        
+
+       
+
         rownum9 = rownum9 + UBound(a9, 1)
+
         '숫자 체인지 필요 variable end 9
 
-        
-        source_filename = Dir()
+ 
+
         source_wbk.Close savechanges:=False
 
+    End If
+
+        source_filename = Dir()
+
     Loop
+
     
+
     destwbk.Close savechanges:=True
+
+ 
 
 End Sub
 
-Sub GetSheets10()
-    
+ 
+
+Sub GetSheets10(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
     Dim destwbk As Workbook
+
     Dim destsheet As Worksheet
+
     Dim source_folderpath As String
+
     Dim source_filename As String
+
     Dim v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11 As String  'values to look up
+
     Dim source_wbk As Workbook
+
     Dim source_wks As Worksheet
+
     Dim sourcerange As Range
+
     Dim source_last_row As Long
+
     Dim destrange As Range
+
     Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
-      
-    Set destwbk = Workbooks.Open("C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx")
+
+     
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
     Set destsheet = destwbk.Sheets("0")
-    source_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\New folder\"
-    source_filename = Dir(source_folderpath & "*.xlsx")
-    v1 = "1."
-    v2 = "2."
-    v3 = "3."
-    v4 = "4."
-    v5 = "5."
-    v61 = "6-1. 전자어음"
-    v62 = "6-2. 수표/어음"
-    v71 = "7-1. 미결제 전자어음"
-    v72 = "7-2. 수표/어음"
-    v8 = "8."
-    v9 = "9."
-    v10 = "10."
-    v11 = "11."
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+   
+
     
+
+    v1 = "1."
+
+    v2 = "2."
+
+    v3 = "3."
+
+    v4 = "4."
+
+    v5 = "5."
+
+    v61 = "6-1. 전자어음"
+
+    v62 = "6-2. 수표/어음"
+
+    v71 = "7-1. 미결제 전자어음"
+
+    v72 = "7-2. 수표/어음"
+
+    v8 = "8."
+
+    v9 = "9."
+
+    v10 = "10."
+
+    v11 = "11."
+
+   
+
+ 
 
     Do While source_filename <> ""
-        
+
+       
+
         Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True)
-        Set source_wks = source_wbk.Worksheets("0")
+
+        Set source_wks = source_wbk.Worksheets(1)
+
         source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row 'last rownum
-                
+
+               
+
     Dim x As Long
 
-        
+ 
+
+       
+
         For x = source_last_row To 1 Step -1
+
             If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
         Next
-        
+
+       
+
         rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
         rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
         rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
         rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
         rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
         rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
         rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
         rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
         rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
         rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
         rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
         rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
-        
+
+       
+
         'source_wks.Columns("C:C").SpecialCells(xlCellTypeBlanks).EntireRow.Delete
-        
+
+       
+
         On Error Resume Next
+
         i1 = Application.WorksheetFunction.Match(v1, source_wks.Range("B1:B" & source_last_row), 0)
+
         i2 = Application.WorksheetFunction.Match(v2, source_wks.Range("B1:B" & source_last_row), 0)
+
         i3 = Application.WorksheetFunction.Match(v3, source_wks.Range("B1:B" & source_last_row), 0)
+
         i4 = Application.WorksheetFunction.Match(v4, source_wks.Range("B1:B" & source_last_row), 0)
+
         i5 = Application.WorksheetFunction.Match(v5, source_wks.Range("B1:B" & source_last_row), 0)
+
         i61 = Application.WorksheetFunction.Match(v61, source_wks.Range("C1:C" & source_last_row), 0)
+
         i62 = Application.WorksheetFunction.Match(v62, source_wks.Range("C1:C" & source_last_row), 0)
+
         i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
         i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
         i8 = Application.WorksheetFunction.Match(v8, source_wks.Range("B1:B" & source_last_row), 0)
+
         i9 = Application.WorksheetFunction.Match(v9, source_wks.Range("B1:B" & source_last_row), 0)
+
         i10 = Application.WorksheetFunction.Match(v10, source_wks.Range("B1:B" & source_last_row), 0)
+
         i11 = Application.WorksheetFunction.Match(v11, source_wks.Range("B1:B" & source_last_row), 0)
+
         On Error GoTo 0
-        
-        
-        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
-        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
-        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
-        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
-        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
-        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
-        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
-        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
-        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
-        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
-        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 8)).Value
-        
-        
-        '숫자 체인지 필요 variable begin 10
-        destsheet.Range("A" & rownum10 & ":" & "A" & rownum10 - 1 + UBound(a10, 1)).EntireRow.Insert
-        Set rng10 = destsheet.Range("C" & rownum10 & ":" & "J" & rownum10 - 1 + UBound(a10, 1))
-        
-        
-        rng10.Value = a10
-        
-        destsheet.Range("A" & rownum10 & ":" & "A" & rownum10 - 1 + UBound(a10, 1)).Value = source_filename
-        
-        rownum10 = rownum10 + UBound(a10, 1)
-        '숫자 체인지 필요 variable end 10
+
+       
 
         
-        source_filename = Dir()
+
+        a1 = Range(source_wks.Cells(i1 + 2, 3), source_wks.Cells(i2 - 1, 11)).Value
+
+        a2 = Range(source_wks.Cells(i2 + 2, 3), source_wks.Cells(i3 - 1, 14)).Value
+
+        a3 = Range(source_wks.Cells(i3 + 2, 3), source_wks.Cells(i4 - 1, 10)).Value
+
+        a4 = Range(source_wks.Cells(i4 + 2, 3), source_wks.Cells(i5 - 1, 13)).Value
+
+        a5 = Range(source_wks.Cells(i5 + 2, 3), source_wks.Cells(i61 - 2, 9)).Value
+
+        a61 = Range(source_wks.Cells(i61 + 2, 3), source_wks.Cells(i62 - 1, 6)).Value
+
+        a62 = Range(source_wks.Cells(i62 + 2, 3), source_wks.Cells(i71 - 2, 7)).Value
+
+        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+        a72 = Range(source_wks.Cells(i72 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+        a8 = Range(source_wks.Cells(i8 + 2, 3), source_wks.Cells(i9 - 1, 11)).Value
+
+        a9 = Range(source_wks.Cells(i9 + 3, 3), source_wks.Cells(i10 - 1, 10)).Value
+
+        a10 = Range(source_wks.Cells(i10 + 2, 3), source_wks.Cells(i11 - 1, 11)).Value
+
+       
+
+     If i10 + 2 = i11 Then
+
         source_wbk.Close savechanges:=False
 
+     Else
+
+        '숫자 체인지 필요 variable begin 10
+
+        destsheet.Range("A" & rownum10 & ":" & "A" & rownum10 - 1 + UBound(a10, 1)).EntireRow.Insert
+
+        Set rng10 = destsheet.Range("C" & rownum10 & ":" & "J" & rownum10 - 1 + UBound(a10, 1))
+
+       
+
+        
+
+        rng10.Value = a10
+
+       
+
+        destsheet.Range("A" & rownum10 & ":" & "A" & rownum10 - 1 + UBound(a10, 1)).Value = source_filename
+
+       
+
+        rownum10 = rownum10 + UBound(a10, 1)
+
+        '숫자 체인지 필요 variable end 10
+
+ 
+
+       
+
+ 
+
+        source_wbk.Close savechanges:=False
+
+End If
+
+            source_filename = Dir()
+
     Loop
-    
+
+   
+
     destwbk.Close savechanges:=True
 
+ 
+
 End Sub
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Sub GetSheets71(source_folderpath_feed As String, merged_file_path As String)
+
+   
+
+    Dim destwbk, source_wbk As Workbook
+
+    Dim destsheet, source_wks As Worksheet
+
+    Dim dest_folderpath, source_folderpath As String
+
+    Dim source_filename As String
+
+    Dim v1, v2, v3, v4, v5, v61, v62, v71, v72, v8, v9, v10, v11 As String  'values to look up
+
+    Dim i1, i2, i3, i4, i5, i61, i62, i71, i72, i8, i9, i10, i11 As Long
+
+    Dim destrange, sourcerange As Range
+
+    Dim source_last_row As Long
+
+    Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum61, rownum62, rownum71, rownum72, rownum8, rownum9, rownum10, rownum11 As Long
+
+    Dim a71, a72, rng71, rng72 As Variant
+
+   
+
+    
+
+    
+
+    v1 = "1.": v2 = "2.": v3 = "3.": v4 = "4.": v5 = "5.": v61 = "6-1. 전자어음": v62 = "6-2. 수표/어음": v71 = "7-1. 미결제 전자어음": v72 = "7-2. 수표/어음": v8 = "8.": v9 = "9.": v10 = "10.": v11 = "11."
+
+   
+
+    'dest_folderpath = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Input - Copy\Base.xlsx"
+
+   
+
+    Set destwbk = Workbooks.Open(merged_file_path)
+
+    Set destsheet = destwbk.Sheets("0")
+
+   
+
+    source_folderpath = source_folderpath_feed
+
+    source_filename = Dir(source_folderpath & "*은행.xlsx")
+
+ 
+
+'******************** Loop Begin ******************************************************************************
+
+    Do While source_filename <> ""
+
+        
+
+        Set source_wbk = Workbooks.Open(source_folderpath & source_filename, True, True) 'Read-only로 Source File 열기
+
+        Set source_wks = source_wbk.Worksheets(1) 'Source File의 첫번째 Sheet 선택
+
+        source_last_row = source_wks.Cells(Rows.Count, "C").End(xlUp).Row '해당 Sheet의 last rownum
+
+               
+
+        'Source File - Sheet의 Empty row delete
+
+        Dim x As Long
+
+        For x = source_last_row To 1 Step -1
+
+            If Application.WorksheetFunction.CountA(source_wks.Rows(x)) = 0 Then source_wks.Rows(x).Delete
+
+        Next
+
+       
+
+        'Destination Sheet에서 시작위치 찾아주기
+
+        rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C:C"), 0)
+
+       
+
+        'Source Range 위치 세팅
+
+        On Error Resume Next
+
+        i71 = Application.WorksheetFunction.Match(v71, source_wks.Range("C1:C" & source_last_row), 0)
+
+        i72 = Application.WorksheetFunction.Match(v72, source_wks.Range("C1:C" & source_last_row), 0)
+
+        On Error GoTo 0
+
+        'Source Range 데이터 없으면 소스파일 종료
+
+        If i71 + 2 = i72 Then
+
+            source_wbk.Close savechanges:=False
+
+        Else
+
+       
+
+        'Source Range 데이터 있으면 값 A71로 Copy
+
+        a71 = Range(source_wks.Cells(i71 + 2, 3), source_wks.Cells(i72 - 1, 8)).Value
+
+       
+
+        'Dest Sheet Range 세팅 1/2
+
+        destsheet.Range("A" & rownum71 & ":" & "A" & rownum71 - 1 + UBound(a71, 1)).EntireRow.Insert
+
+        'Dest Sheet Range 세팅 2/2
+
+        Set rng71 = destsheet.Range("C" & rownum71 & ":" & "H" & rownum71 - 1 + UBound(a71, 1))
+
+        'Source Range(A71) 값 Dest Range에 부어주기
+
+        rng71.Value = a71
+
+       
+
+        'A열에 소스파일명 입력 - QC목적
+
+        destsheet.Range("A" & rownum71 & ":" & "A" & rownum71 - 1 + UBound(a71, 1)).Value = source_filename
+
+ 
+
+        'Loop를 위해서 71값 재세팅
+
+        rownum71 = rownum71 + UBound(a71, 1)
+
+ 
+
+        'Source 파일 닫어주기
+
+        source_wbk.Close savechanges:=False
+
+ 
+
+    End If
+
+     source_filename = Dir()
+
+ 
+
+    Loop
+
+   
+
+    destwbk.Close savechanges:=True
+
+ 
+
+End Sub
+
+ 
+
+ 
+
+Sub shading_changer(merged_file_path As String)
+
+ 
+
+    Dim destwbk As Workbook
+
+    Dim destsheet As Worksheet
+
+    Dim v1, v2, v3, v4, v5, v61, v62, v71, v72, v8, v9, v10, v11 As String  'values to look up
+
+    Dim rownum1, rownum2, rownum3, rownum4, rownum5, rownum6, rownum7, rownum8, rownum9, rownum10, rownum11 As Long
+
+   
+
+    v1 = "1.": v2 = "2.": v3 = "3.": v4 = "4.": v5 = "5.": v61 = "6-1. 전자어음": v62 = "6-2. 수표/어음": v71 = "7-1. 미결제 전자어음": v72 = "7-2. 수표/어음": v8 = "8.": v9 = "9.": v10 = "10.": v11 = "11."
+
+   
+
+    Set destwkb = Workbooks.Open(merged_file_path)
+
+    Set destsheet = destwkb.Worksheets(1)
+
+   
+
+    rownum1 = 2 + Application.WorksheetFunction.Match(v1, destsheet.Range("B1:B50000"), 0)
+
+    rownum2 = 2 + Application.WorksheetFunction.Match(v2, destsheet.Range("B1:B50000"), 0)
+
+    rownum3 = 2 + Application.WorksheetFunction.Match(v3, destsheet.Range("B1:B50000"), 0)
+
+    rownum4 = 2 + Application.WorksheetFunction.Match(v4, destsheet.Range("B1:B50000"), 0)
+
+    rownum5 = 2 + Application.WorksheetFunction.Match(v5, destsheet.Range("B1:B50000"), 0)
+
+    rownum61 = 2 + Application.WorksheetFunction.Match(v61, destsheet.Range("C1:C50000"), 0)
+
+    rownum62 = 2 + Application.WorksheetFunction.Match(v62, destsheet.Range("C1:C50000"), 0)
+
+    rownum71 = 2 + Application.WorksheetFunction.Match(v71, destsheet.Range("C1:C50000"), 0)
+
+    rownum72 = 2 + Application.WorksheetFunction.Match(v72, destsheet.Range("C1:C50000"), 0)
+
+    rownum8 = 2 + Application.WorksheetFunction.Match(v8, destsheet.Range("B1:B50000"), 0)
+
+    rownum9 = 3 + Application.WorksheetFunction.Match(v9, destsheet.Range("B1:B50000"), 0)
+
+    rownum10 = 2 + Application.WorksheetFunction.Match(v10, destsheet.Range("B1:B50000"), 0)
+
+    rownum11 = Application.WorksheetFunction.Match(v11, destsheet.Range("B1:B50000"), 0)
+
+ 
+
+    Range("A" & rownum1, "S" & rownum2 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum2, "S" & rownum3 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum3, "S" & rownum4 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum4, "S" & rownum5 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum5, "S" & rownum61 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum61, "S" & rownum62 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum62, "S" & rownum71 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum71, "S" & rownum72 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum72, "S" & rownum8 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum8, "S" & rownum9 - 3).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum9, "S" & rownum10 - 2).Interior.ColorIndex = xlNone
+
+    Range("A" & rownum10, "S" & rownum11 - 1).Interior.ColorIndex = xlNone
+
+ 
+
+    ActiveWorkbook.Close savechanges:=True
+
+ 
+
+ 
+
+End Sub
+
+ 
+
+ 
 
 Sub call_all()
-    
-    Application.ScreenUpdating = False
-    
-    Call GetSheets1
-    Call GetSheets2
-    Call GetSheets3
-    Call GetSheets4
-    Call GetSheets5
-    Call GetSheets61
-    Call GetSheets62
-    Call GetSheets71
-    Call GetSheets72
-    Call GetSheets8
-    Call GetSheets9
-    Call GetSheets10
-    
-    Application.ScreenUpdating = True
-    
-    MsgBox "Complete"
-    
-End Sub
 
-'필요한 변경사항
-'변경 1: source array 크기
-'변경 2: DEST ARRAY 크기 조정
-'변경 3: call all에서 filepath(folder)랑 base파일명 global feeding 가능한지?
-'변경 4: 불필요한 line 지우기 (a1일때, a2,a3등...)
-'변경 5: base 파일 마지막에 #N/A 값 지워주기?(array크기 변경해주면 아마도 필요없을듯함)
-'변경 6: baes 파일 template 현재 각 번호별 띄어지지 않는 점 변경
+   
+
+    Dim selected_folderpath As String
+
+    Dim source_folderpath_feed As String
+
+    Dim destwbk_path As String
+
+    Dim merged_file_path As String
+
+    Dim new_file_name As String
+
+ 
+
+   
+
+    With Application.FileDialog(msoFileDialogFolderPicker)
+
+        .Title = "Please select the source folder."
+
+        .AllowMultiSelect = False
+
+        .Show
+
+        On Error Resume Next
+
+        selected_folderpath = .SelectedItems(1)
+
+        Err.Clear
+
+        On Error GoTo 0
+
+    End With
+
+   
+
+    source_folderpath_feed = selected_folderpath & "\"
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    'Base파일 default template 위치만 한번 잡아주면 끝 (2018-03-05 15:12 comment)
+
+    destwbk_path = "C:\Users\tn934tj\Documents\Hoon\1_Nonchargeable_or_Adhocs\2017-12-12_감사본부_프로세스_자동화(RPA)\Phase_2\Ad_hoc\조회서_취합_개발\Test\Base.xlsx"
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    '################################################################################################################################################################
+
+    new_file_name = Trim(Right(selected_folderpath, Len(selected_folderpath) - InStrRev(selected_folderpath, "\")))
+
+   
+
+    merged_file_path = source_folderpath_feed & new_file_name & "_취합.xlsx"
+
+   
+
+    
+
+    
+
+    Application.ScreenUpdating = False
+
+    Application.DisplayStatusBar = False
+
+   
+
+    Call GetSheets1(source_folderpath_feed, destwbk_path, new_file_name)
+
+    Call GetSheets2(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets3(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets4(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets5(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets61(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets62(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets71(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets72(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets8(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets9(source_folderpath_feed, merged_file_path)
+
+    Call GetSheets10(source_folderpath_feed, merged_file_path)
+
+   
+
+    Call shading_changer(merged_file_path)
+
+ 
+
+   
+
+    Application.ScreenUpdating = True
+
+    Application.DisplayStatusBar = True
+
+   
+
+    MsgBox "Complete"
+
+   
+
+End Sub
