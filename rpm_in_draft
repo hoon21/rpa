@@ -1,0 +1,710 @@
+
+' 불필요한 행, 열 삭제
+Sub DataClean()
+
+    Application.ScreenUpdating = False
+    
+    Dim wks As Worksheet
+    Dim startCell As Range
+    Dim startCellVal As String
+    Dim deleteRange As Range
+    Dim ary As Variant
+    Dim i As Integer
+    Dim homeWks As Worksheet
+    
+    Dim colNameAry(7) As String
+    
+    colNameAry(0) = "Emp Rank Descr"    'C
+    colNameAry(1) = "Emp Name"          'D
+    colNameAry(2) = "Eng ID"            'Q
+    colNameAry(3) = "Eng Name"          'R
+    colNameAry(4) = "Eng Type"          'S
+    colNameAry(5) = "Eng SL"            'U
+    colNameAry(6) = "Eng SSL"           'V
+    colNameAry(7) = "Week"              'Z~AN
+    
+
+    Set wks = Worksheets("Retain Planned vs Actual GIFS")
+    Set homeWks = Worksheets("Home")
+    wks.Activate
+    
+    'Set startCell = wks.Range("A1")
+    'startCellVal = Trim(startCell.Value)
+    'MsgBox startCellVal
+    
+    Set startCell = wks.Range("A1")
+    
+    
+
+'######################################################################################
+
+
+    'UnMerge
+'    ActiveSheet.Cells.UnMerge
+
+    'A1~A5행 삭제 A1이 Emp Rank Descr 이면 정리가 됐으므로
+'    If startCellVal <> "Emp Rank Descr" Then
+'         Range("A1:A5").EntireRow.Delete
+         'MsgBox "행삭제"
+'    End If
+'##########################################################################################
+'
+
+
+    Dim colCnt As Integer
+    Dim colStr As String
+    
+    
+    colCnt = wks.Cells(1, Columns.Count).End(xlToLeft).Column '컬럼개수
+
+    'ary = wks.Range(start_cell, wks.Cells(1, colCnt)).Value
+    
+    'ary = startCell.EntireRow.Column
+    'MsgBox columnCnt
+    
+    '필요없는 열 삭제하기
+    'Dim colNameAryCnt As Integer
+    'colNameAryCnt = UBound(colNameAry) - LBound(colNameAry) + 1
+    Dim iCount As Integer
+    Dim isContain As Boolean
+    isContain = False
+
+'############################################################################################
+
+    For i = 1 To colCnt
+
+        ' 정리가 다되면 for문을 돌리지 않는다. 정리된 컬럽개수 = 23 (하드코딩)
+        If colCnt = 23 Then
+            Exit For
+        End If
+
+        colStr = wks.Cells(1, i).Value
+        wks.Cells(1, i).Select
+        'MsgBox colStr
+
+        For Each colName In colNameAry
+
+            'idx = InStr(1, colStr, colName)
+
+            If InStr(1, colStr, colName) > 0 Then
+                isContain = True
+                Exit For
+            Else
+                isContain = False
+            End If
+        Next
+
+        If isContain = False Then
+            'MsgBox colStr & "/" & colName & "/" & isContain
+            ActiveCell.EntireColumn.Delete
+            i = i - 1
+        End If
+
+        iCount = iCount + 1
+
+        If colCnt = iCount Then
+            Exit For
+        End If
+
+    Next i
+
+'#################################################################################
+
+
+   Delete_row ("E") 'Delete_row프로시저 호출(행정리)
+    
+    
+
+''#################################################################################
+
+      
+'    EP Naem행 추가 - Eng Type(E) 와 Eng SL(F) 사이에 추가
+    
+    'Dim epGpn As Rang
+
+
+    'Set epGpn = wks.Range("F1")
+    
+    colCnt = wks.Cells(1, Columns.Count).End(xlToLeft).Column '정리된 컬럼개수 다시 정의
+    isContain = False
+    
+    For i = 1 To colCnt
+    
+        colStr = wks.Cells(1, i).Value
+        
+        If InStr(1, colStr, "EP Name") > 0 Then
+                isContain = True
+            Exit For
+        Else
+            isContain = False
+        End If
+        
+    Next i
+    
+    If isContain = False Then
+        wks.Range("F1").EntireColumn.Insert
+    End If
+        
+    If wks.Range("F1").Value = "" Then
+        wks.Range("F1") = "EP Name"
+    End If
+   
+    
+    
+    ' EP GPN행 추가 - EP Name(F) 앞에
+    
+    colCnt = wks.Cells(1, Columns.Count).End(xlToLeft).Column '정리된 컬럼개수 다시 정의
+    isContain = False
+    
+    For i = 1 To colCnt
+    
+        colStr = wks.Cells(1, i).Value
+        
+        If InStr(1, colStr, "EP GPN") > 0 Then
+                isContain = True
+            Exit For
+        Else
+            isContain = False
+        End If
+        
+    Next i
+    
+    If isContain = False Then
+        wks.Range("F1").EntireColumn.Insert
+    End If
+        
+    If wks.Range("F1").Value = "" Then
+        wks.Range("F1") = "EP GPN"
+    End If
+   
+    
+    
+'
+'    If colCnt = 23 Then
+'        wks.Range("F1").EntireColumn.Insert
+'    End If
+'
+'    If wks.Range("F1").Value = "" Then
+'        wks.Range("F1") = "EP GPN"
+'    End If
+'
+
+'#################################################################################################
+
+
+
+
+    'MsgBox "vlookup시작"
+
+
+    ' vlookup으로 값 들고오기
+
+    Dim lookFor As Range            '값을 넣을 테이블
+    Dim epTb As Range           '정보를 가져올 테이블
+    Dim nameResult As Variant       'EP Name 배열
+    Dim gpnResult As Variant        'EP GPN 배열
+    Dim tbAryCol As Integer         'epTb에서 몇번째 열 들고올껀지 정함
+    Dim lookForCol As Integer       'lookfor.value 열로부터 몇뻔째 열에 넣을지 지정
+    Dim epFilePath As String
+    Dim lookValueCol As Range
+
+    Dim refWbk As Workbook          '참조 워크북
+
+    epFilePath = homeWks.Range("C28").Value '참조할 파일경로
+    
+    colCnt = Sheet1.Cells(1, Columns.Count).End(xlToLeft).Column '컬럼개수
+    rowCnt = Sheet1.Cells(Rows.Count, 1).End(xlUp).Row '행개수
+    
+    Set lookFor = Range([C2], Cells(rowCnt, "C")) 'Eng ID 로 찾기
+    'Set epName = Range([F2], Cells(rowCnt, "F"))
+    
+    If Trim(Range("F2").Value) = "" Then
+            
+        Set refWbk = Workbooks.Open(epFilePath, True, True)
+        
+        Set epTb = refWbk.Sheets("Report 1").Range("A1", "AG548497")  ' 범위 하드코딩되어있음
+        
+        tbAryCol = 32
+        
+        nameResult = Application.VLookup(lookFor.Value, epTb, tbAryCol + 1, False)   'vlookup 이름가져오기  AG-33컬럼
+        gpnResult = Application.VLookup(lookFor.Value, epTb, tbAryCol, False)        'vlookup 사번가져오기   AF-32컬럼
+        
+        If IsError(gpnResult) Then
+            'lookFor.Offset(0, 4) = "NULL"
+            'MsgBox "Not found", vbCritical
+        Else
+            lookFor.Offset(0, 3) = gpnResult
+            lookFor.Offset(0, 4) = nameResult
+        End If
+        
+        
+        
+        refWbk.Close savechanges:=False
+        
+    End If
+    
+    
+    '################################################################################################
+    
+    
+    
+    '#N/A ==>> NULL 문자열로 대체하기
+    '#N/A String이 아니라서 error 발생
+    
+        rowCnt = Sheet1.Cells(Rows.Count, 1).End(xlUp).Row
+        Set epName = Range([F2], Cells(rowCnt, "F"))
+        i = 1
+         
+        
+        For Each cell In epName
+            
+            If IsError(cell.Value) = True Then
+                Range("F" & i + 1) = "NULL"
+                i = i + 1
+                'MsgBox "NULL" & i
+            Else
+                i = i + 1
+                'MsgBox "NULl아님" & i
+            
+            End If
+  
+        Next cell
+        
+    
+
+   'Sheet1.Range("A1").Select
+
+
+
+
+
+
+
+'################################################################################################
+
+    'MsgBox "F시작"
+    Delete_row ("F")   'epname 이 N/A인 행정리
+    
+'#################################################################################################
+
+
+    Application.ScreenUpdating = True
+
+    
+    wks.Cells.EntireColumn.AutoFit
+    wks.Cells.EntireRow.AutoFit
+    
+    homeWks.Activate
+    ActiveSheet.Range("A1").Select
+    
+    '파일 탭만들고 저장 프로시저 실행
+    'Split_toFile
+
+
+
+End Sub
+
+
+
+' 불필요한 행 삭제
+Sub Delete_row(cell As String)
+
+    Dim ary As Variant
+    Dim startCell As Range
+    Sheet1.Range("A1").Select
+    
+    'MsgBox cell
+    
+    Set startCell = Sheet1.Range(cell & "2")
+    rowCnt = Sheet1.Cells(Rows.Count, 1).End(xlUp).Row '행개수
+    
+    ary = Sheet1.Range(startCell, Range(cell & rowCnt)).Value
+    
+    Dim i As Integer
+    Dim columnVal As String
+    Dim cnt As Integer
+    
+    cnt = 1 'rowCnt 비교
+    j = 0   '행 찾기위한 숫자 (삭제한 행 개수)
+    
+    
+    If cell = "E" Then
+
+        For i = 1 To rowCnt
+            
+            columnVal = Trim(Application.WorksheetFunction.Index(ary, i, 1))
+              
+            If columnVal = "CHARGEABLE" Or columnVal = "AUTHORIZED" Then
+                'MsgBox "안지움" & columnVal & "_" & i & "_" & j
+            Else
+                'MsgBox "!!!!!!!!!!!!!!!!!!!!!지움" & columnVal & "_" & i & "_" & j
+                    Range("E" & i - j + 1).EntireRow.Delete
+                j = j + 1
+            End If
+            
+            cnt = cnt + 1
+           
+            If rowCnt = cnt Then
+                Exit For
+            End If
+        
+        Next i
+        
+    ElseIf cell = "F" Then
+    
+        For i = 1 To rowCnt
+        
+        columnVal = Application.WorksheetFunction.Index(ary, i, 1)
+        
+        'MsgBox columnVal
+            If columnVal = "NULL" Then
+                'MsgBox "!!!!!!!!!!!!!!!!!!!!!지움_에러" & "_" & i & "_" & j
+                    Range("F" & i - j + 1).EntireRow.Delete
+                j = j + 1
+            End If
+            
+        cnt = cnt + 1
+       
+        If rowCnt = cnt Then
+            Exit For
+        End If
+    
+    Next i
+    
+    End If
+    
+
+End Sub
+
+
+
+
+Sub Split_toFile()
+
+    Dim rng As Range
+    Dim colsCnt As Double
+    Dim colNm As String
+    Dim Imsi
+    Dim sht As Long
+    Dim dt As String
+    Dim wks As Worksheet
+    
+    Set wks = Worksheets("Retain Planned vs Actual GIFS")
+    wks.Activate
+    
+    dt = Replace(Date, "-", "") '
+    
+    Application.ScreenUpdating = False
+    For sht = Sheets.Count To 3 Step -1
+        Application.DisplayAlerts = False
+        Sheets(sht).Delete
+        Application.DisplayAlerts = True
+    Next sht
+    colNm = "F"         ' F: EP GPN
+    
+    Set rng = ActiveSheet.UsedRange
+    colsCnt = rng.Columns.Count
+    
+    rng.Columns(colNm).AdvancedFilter Action:=2, _
+        CopyToRange:=Cells(1, colsCnt + 1), Unique:=1
+        ' Filter Action:=2   //필터링한 것을 새 위치에 저장
+        ' CopyToRange:=     //xlFilterCopy 일때 붙여넣을 범위
+        ' Unique            //true 일때 중복된 항목 제거
+        
+    'MsgBox colsCnt
+    Imsi = Range(Cells(2, colsCnt + 1), Cells(Rows.Count, colsCnt + 1).End(3))
+                                                                                       
+    For sht = 1 To UBound(Imsi, 1)
+        Sheets.Add After:=Sheets(Sheets.Count)
+        ActiveSheet.Name = Imsi(sht, 1)
+    Next sht
+
+    Sheets(1).Activate
+            
+    For sht = 1 To UBound(Imsi, 1)
+        Cells(2, colsCnt + 1) = Imsi(sht, 1)
+        rng.AdvancedFilter Action:=2, CriteriaRange:=Cells(1, colsCnt + 1).Resize(2), _
+        CopyToRange:=Sheets(sht + 1).Cells(1, 1), Unique:=0
+        Sheets(sht + 1).Cells.EntireColumn.ColumnWidth = 7.9
+        Sheets(sht + 1).Cells.EntireRow.RowHeight = 17.4
+        Sheets(sht + 1).Cells.EntireColumn.AutoFit
+        'Worksheets(Imsi(sht, 1)).PageSetup.Zoom = 80
+       ' Sheets(sht + 1).PageSetup.Zoom = 80
+       'Sheets(sht + 1).Range("A1").Select
+       'ActiveSheet.Range("A1").Select
+       
+    Next sht
+    Columns(colsCnt + 1).Delete
+    Set rng = Nothing
+   
+   
+   
+
+' #############################################################################################################
+' 메일 시트만들기
+
+
+    Dim emailWks As Worksheet
+    Dim mainWks As Worksheet
+    Dim lookFor As Range
+    Dim epTbl As Range
+    Dim gpnResult As Variant
+    
+    
+    Sheets.Add After:=Sheets(1)
+    ActiveSheet.Name = "Email_Status"
+    
+    Set emailWks = Sheets("Email_Status")
+    emailWks.Range("B1") = "이름"
+    emailWks.Range("C1") = "보낼주소-사번"
+    emailWks.Range("D1") = "메일보낸날짜"
+    
+    For sht = 1 To UBound(Imsi, 1)
+        'MsgBox "ㅇㅇㅇ" & i
+        emailWks.Range("C" & (idx + 2)) = Imsi(sht, 1)
+        idx = idx + 1
+    Next sht
+    
+    rowCnt = emailWks.Cells(Rows.Count, 3).End(xlUp).Row
+    'mainRowCnt = Sheets("APAC Retain Planned vs Actual H").Cells(Rows.Count, 1).End(xlUp).Row
+    
+  
+    Set lookFor = Range([C2], Cells(rowCnt, "C"))
+    Set epTbl = Worksheets("APAC Retain Planned vs Actual H").Range("F2", "G548497")
+    
+    
+    gpnResult = Application.VLookup(lookFor.Value, epTbl, 2, False)
+    
+    lookFor.Offset(0, -1) = gpnResult
+    
+    
+    
+    
+    
+    
+
+
+'##############################################################################################
+ '# sheet별로 파일 저장하기
+
+    Dim i As Double
+    Dim tR As Range
+    Dim tmp As String
+    Dim epName As String
+    Dim saveFolderName As String
+    Dim savePath As String
+
+    saveFolderName = "C:\Users\qp389lp\Desktop\RPA\B&PR\macro_test\결과물\" & dt
+    savePath = saveFolderName & "\"
+
+    If folder_exists(saveFolderName) Then
+    'MsgBox "이미 있는 폴더입니다."
+    Else
+        MkDir saveFolderName
+    End If
+
+
+    For i = 3 To Sheets.Count   '생성된 세번째 시트부터 시작
+
+        Sheets(i).Select
+
+        tmp = ActiveSheet.Name                  'tap Name > EP Name으로 되어있음
+        'epName = ActiveSheet.Range("Q2").Value 'EP name 하드코딩
+        
+        epName = ActiveSheet.Range("G2").Value   'EpGpn
+        
+          Set tR = ActiveSheet.Cells
+
+        tR.Select
+
+        Selection.Copy
+
+        Workbooks.Add
+
+        ActiveSheet.Paste
+
+        Application.CutCopyMode = False
+
+        Cells.EntireColumn.AutoFit
+        Cells.EntireRow.AutoFit
+
+        ActiveSheet.Range("A1").Select
+
+        Application.DisplayAlerts = False
+
+        'ActiveWorkbook.SaveAs tmp & "_" & epName & "_" & dt & ".xlsx"
+        ActiveWorkbook.SaveAs fileName:=savePath & tmp & "_" & epName & "_" & dt & ".xlsx"  '지정된 경로로 저장(경로는 하드코딩)
+
+        Application.DisplayAlerts = True
+
+        ActiveWindow.Close
+
+    Next i
+
+
+
+
+
+
+
+   
+    
+    
+End Sub
+
+
+
+Sub 메일보내기()
+    
+    Dim rng As Range
+    Dim i As Integer, cntR As Integer
+    Dim Flag As Boolean
+    Dim emailStatusWks As Worksheet
+    
+    emailStatusWks = Worksheets("Email_Status").Activate
+    
+    
+    If MsgBox("메일을 보내시겠습니까?", vbQuestion + vbOKCancel, "") = vbCancel Then Exit Sub
+    cntR = Cells(1048576, 3).End(xlUp).Row
+    If cntR = 1 Then
+        MsgBox "사번을 누적해주세요.", vbCritical, ""
+        Exit Sub
+    End If
+    
+    ' (1,2) 이름 / 3 메일주소 / 4 보낸날짜
+    Dim filePath As String
+    Dim dt As String
+    
+    dt = Replace(Date, "-", "")
+    
+    filePath = "C:\Users\qp389lp\Desktop\RPA\B&PR\macro_test\결과물\"
+    
+    
+    Set rng = Range(Cells(2, 3), Cells(cntR, 3))
+    rng.Select
+    For Each rng In rng
+        If Cells(rng.Row, 4).Value = "" Then
+            If Cells(rng.Row, 3).Value <> "" And Cells(rng.Row, 2).Value <> "" And Cells(rng.Row, 4) = "" Then
+                'if file_exists (filePath & Cells(rng.Row, 3) & "_" & Cells(rng.Row, 2) & "_" & dt) =
+                Flag = Mailto(Cells(rng.Row, 3).Value, Cells(rng.Row, 2).Value)
+            Else
+                i = i + 1
+            End If
+        End If
+    Next
+
+    If i > 0 Then
+        MsgBox i & "개의 메일전송이 누락되었습니다.", vbCritical, ""
+    End If
+    
+End Sub
+
+
+
+Private Function Mailto(strAddress As String, strName As String) As Boolean
+     '
+    'Dim oOutlook    As Outlook.Application
+    'Dim oMailItem   As Outlook.MailItem
+    'Dim iAppVer     As Integer
+    'Dim varAttachFile As Variant
+    Dim filePath As String
+    Dim fileName As String
+    Dim dt As String
+    
+    dt = Replace(Date, "-", "")
+    
+    filePath = "C:\Users\qp389lp\Desktop\RPA\B&PR\macro_test\결과물\"
+    fileName = strAddress & "_" & strName & "_" & dt
+    
+    On Error Resume Next
+    'On Error GoTo ErrProcedure
+    'iAppVer = val(Outlook.Application.Version)
+    
+    
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+    'Set oOutlook = CreateObject("Outlook.Application" & IIf(iAppVer < 12, "", "." & iAppVer)) ' 버전별 설정
+    'Set oMailItem = oOutlook.CreateItem(olMailItem) ' 메일설정
+    With OutMail
+         .Display
+         .SendUsingAccount = OutApp.Session.Accounts.Item(2)
+         .To = strAddress ' 받는사람 주소
+         .Subject = "제목입니다." ' 제목
+         .HTMLBody = "<body style=font-size:9pt; font-family:돋움;><font face=""맑은 고딕"">" & _
+                        "안녕하세요." & _
+                        "<br>" & _
+                        "ADC 김나은 입니다." & _
+                        "<br><br>" & _
+                        "현재 ADC에서 2018년 Retain VS Actual Macro Email Test 입니다." & _
+                        "<br><br>" & _
+                        "감사합니다." & _
+                        "<br>" & _
+                        "ADC"
+        .Attachments.Add filePath & fileName
+        
+        '.Send
+        
+        
+    End With
+    
+ErrProcedure: ' 에러시 이곳으로 점프
+    Set oMailItem = Nothing
+    Set oOutlook = Nothing
+    If Err = 0 Then
+        Application.StatusBar = "메일이 성공적으로 발송되었습니다."
+    ElseIf Err = 429 Then
+        MsgBox "Microsoft Outlook 개체를 작성할 수 없습니다.", vbExclamation, "메일 발송 실패"
+    Else
+        MsgBox Err.Description, vbExclamation, "메일 발송 실패"
+    End If
+End Function
+
+
+' 파일 유무 여부
+Function file_exists(strRng As String) As Boolean
+
+    Dim strName As String                            '파일이름 넣을 변수
+ 
+
+    strName = "C:\Windows\" & strRng       '파일의 경로 + 확인하려는 파일이름
+ 
+    If Dir(strName) <> vbNullString Then        'Dir 은 matching되는 처음 발견된 파일 이름을 반환.
+        file_exists = True                              '파일이름 길이가 0이 아니므로 파일 존재
+    Else                                                    '만약 파일 이름 길이가 0이면
+        file_exists = False                             '파일 존재하지 하지 않음
+    End If
+    
+End Function
+
+
+'-------------------------------------------------------------------------------------
+'폴더같은이름 있는지 여부
+
+
+Private Function folder_exists(fldName As String) As Boolean
+If Len(Dir(fldName, vbDirectory)) <> 0 Then    '폴더 존재하여 폴더문자길이 0 아니면
+    folder_exists = True                                       '폴더가 이미 존재
+Else
+    folder_exists = False
+End If
+End Function
+
+
+
+
+' 문자열 포함 여부 확인
+Function isStrContain(contents As String, val As String) As Boolean
+ If InStr(1, contents, val) > 0 Then
+        isStrContain = True
+    Else
+        isStrContain = False
+    End If
+End Function
+ 
+
+
+
+ 
+
+
+
